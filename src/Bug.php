@@ -1,8 +1,8 @@
 <?php
 // src/Bug.php
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use DateTime;  
 
 #[ORM\Entity]
 #[ORM\Table(name: 'bugs')]
@@ -21,6 +21,12 @@ class Bug
 
     #[ORM\Column(type: 'string')]
     private string $status;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private User $engineer;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private User $reporter;
 
     public function getId(): ?int {
         return $this->id;
@@ -49,4 +55,27 @@ class Bug
     public function getStatus(): string {
         return $this->status;
     }
+
+    public function setEngineer(User $engineer): void
+    {
+        $engineer->assignedToBug($this);
+        $this->engineer = $engineer;
+    }
+
+    public function setReporter(User $reporter): void
+    {
+        $reporter->addReportedBug($this);
+        $this->reporter = $reporter;
+    }
+
+    public function getEngineer(): User
+    {
+        return $this->engineer;
+    }
+
+    public function getReporter(): User
+    {
+        return $this->reporter;
+    }
 }
+

@@ -1,8 +1,10 @@
 <?php
 // src/User.php
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection; 
+
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
 class User
@@ -15,11 +17,11 @@ class User
     #[ORM\Column(type: 'string')]
     private string $name;
 
-    #[ORM\OneToMany(targetEntity: "Bug", mappedBy: "reporter")]
-    private ArrayCollection $reportedBugs;
+    #[ORM\OneToMany(targetEntity: Bug::class, mappedBy: 'reporter')]
+    private Collection $reportedBugs;
 
-    #[ORM\OneToMany(targetEntity: "Bug", mappedBy: "engineer")]
-    private ArrayCollection $assignedBugs;
+    #[ORM\OneToMany(targetEntity: Bug::class, mappedBy: 'engineer')]
+    private Collection $assignedBugs;
 
     public function __construct()
     {
@@ -40,5 +42,15 @@ class User
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function addReportedBug(Bug $bug): void
+    {
+        $this->reportedBugs[] = $bug;
+    }
+
+    public function assignedToBug(Bug $bug): void
+    {
+        $this->assignedBugs[] = $bug;
     }
 }
